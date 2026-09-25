@@ -1,0 +1,6 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Virtual Satellite Lab</title><link rel="stylesheet" href="./styles.css"></head><body>
+<header><div><b>VIRTUAL SATELLITE LAB</b><span>Distributed Aperture · Phase Coherence</span></div><div class="badge">V0.1 · Narrowband</div></header>
+<nav><button class="tab active" data-tab="formation">편대 배치</button><button class="tab" data-tab="focus">빔·초점</button><button class="tab" data-tab="sync">동기오차</button><button class="tab" data-tab="req">요구조건·비교</button></nav>
+<main><aside id="controls"></aside><section class="stage"><div class="stagehead"><div><h1 id="title"></h1><p id="subtitle"></p></div><button id="run">계산 갱신</button></div><div id="visual"></div></section><aside class="results" id="results"></aside></main>
+<footer><span>구면파 · 단일 반송파 · 브라우저 로컬 계산</span><div><button id="saveJson">시나리오 JSON</button><button id="saveCsv">결과 CSV</button><label class="load">JSON 불러오기<input id="loadJson" type="file" accept="application/json"></label></div></footer>
+<script type="module" src="./app.js"></script></body></html>

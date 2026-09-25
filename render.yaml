@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: virtual-satellite-lab
+    runtime: static
+    buildCommand: npm run build
+    staticPublishPath: ./dist
