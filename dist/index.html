@@ -1,6 +1,14 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Virtual Satellite Lab</title><link rel="stylesheet" href="./styles.css"></head><body>
-<header><div><b>VIRTUAL SATELLITE LAB</b><span>Distributed Aperture · Phase Coherence</span></div><div class="badge">V0.1 · Narrowband</div></header>
-<nav><button class="tab active" data-tab="formation">편대 배치</button><button class="tab" data-tab="focus">빔·초점</button><button class="tab" data-tab="sync">동기오차</button><button class="tab" data-tab="req">요구조건·비교</button></nav>
-<main><aside id="controls"></aside><section class="stage"><div class="stagehead"><div><h1 id="title"></h1><p id="subtitle"></p></div><button id="run">계산 갱신</button></div><div id="visual"></div></section><aside class="results" id="results"></aside></main>
-<footer><span>구면파 · 단일 반송파 · 브라우저 로컬 계산</span><div><button id="saveJson">시나리오 JSON</button><button id="saveCsv">결과 CSV</button><label class="load">JSON 불러오기<input id="loadJson" type="file" accept="application/json"></label></div></footer>
-<script type="module" src="./app.js"></script></body></html>
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0a1019"><title>Virtual Satellite Lab · 분산 위성 실험실</title><link rel="stylesheet" href="./styles.css?v=3"></head>
+<body>
+<header class="app-header"><a class="brand" href="./" aria-label="Virtual Satellite Lab 홈"><span class="brand-icon" aria-hidden="true">✦</span><span>VIRTUAL SATELLITE <b>LAB</b><small>분산 위성 · 신호 합성 실험실</small></span></a><div class="header-meta"><span class="status-dot"></span> LOCAL SIMULATION <span class="version">v0.2</span></div></header>
+<div class="workspace">
+<aside class="sidebar" id="settings"><div class="sidebar-title"><span>실험 설정</span><a class="mobile-settings" href="#summary">결과로 ↑</a><button id="reset" class="text-button">초기화 ↺</button></div><div id="controls"></div><div class="local-note"><span class="status-dot"></span> 설정을 바꾸면 즉시 계산됩니다.</div></aside>
+<main>
+<section class="intro"><div><p class="eyebrow">DISTRIBUTED APERTURE / INTERACTIVE LAB</p><h1>여러 위성, 하나의 신호.</h1><p>위성을 배치하고, 위상을 맞추고, 신호가 모이는 순간을 확인하세요.</p></div><a class="mobile-settings" href="#settings">실험 설정 ↓</a><span class="model-tag">구면파 · 협대역 모델</span></section>
+<section class="presets" aria-label="실험 예시"><span>빠른 실험</span><button data-preset="ideal">01 <b>완벽한 정렬</b></button><button data-preset="error">02 <b>경로 오차 발생</b></button><button data-preset="drift">03 <b>시간에 따른 변화</b></button></section>
+<section id="summary" class="summary" aria-label="핵심 실험 결과"></section>
+<div class="analysis-layout"><section class="visual-panel"><nav aria-label="시각화 보기"><button class="tab active" data-tab="formation" aria-pressed="true"><span>01</span> 편대 배치</button><button class="tab" data-tab="focus" aria-pressed="false"><span>02</span> 빔·초점</button><button class="tab" data-tab="sync" aria-pressed="false"><span>03</span> 위상 동기</button><button class="tab" data-tab="req" aria-pressed="false"><span>04</span> 요구 조건</button></nav><div class="stagehead"><div><h2 id="title"></h2><p id="subtitle"></p></div><span id="view-tag" class="view-tag"></span></div><div id="visual"></div><div id="view-note" class="view-note"></div></section><aside id="results" class="inspector" aria-label="결과 해석"></aside></div>
+<footer><span>브라우저 안에서 계산 · 외부 데이터 전송 없음</span><div><button id="saveJson">시나리오 저장 ↓</button><button id="saveCsv">결과 CSV ↓</button><label class="load">JSON 불러오기<input id="loadJson" type="file" accept="application/json,.json"></label></div></footer><p id="message" role="status" aria-live="polite"></p>
+</main></div><script type="module" src="./app.js?v=3"></script></body></html>

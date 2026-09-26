@@ -1,1 +1,11 @@
-{"name":"virtual-satellite-lab","version":"0.1.0","private":true,"type":"module","scripts":{"test":"node --test tests/*.test.mjs","build":"npm test && node scripts/verify.mjs","start":"python3 -m http.server 8000 --directory dist"}}
+{
+  "name": "virtual-satellite-lab",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "build": "npm test && node scripts/verify.mjs",
+    "start": "python3 -m http.server 8000 --directory dist"
+  }
+}
