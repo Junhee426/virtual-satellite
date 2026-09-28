@@ -39,3 +39,11 @@ test('focus center and sampled horizontal cut retain the same physical normaliza
  assert.ok(Math.abs(fm.center-m.actual)<1e-8);
  assert.ok(Math.abs(fm.values[15*31]-field(c,m.truth,m.estimate,-50,0))<1e-8);
 });
+test('fast focus map matches the direct field model at every pixel',()=>{
+ for(const c of [DEFAULTS,{...DEFAULTS,nodes:37,formation:'Ring',pathErrorMm:2,rfPhaseRmsDeg:15,freqOffsetHz:.4,powerMode:'Per node',command:'None'},{...DEFAULTS,nodes:5,formation:'Line',command:'Oracle',pathErrorMm:9,freqOffsetHz:3}]){
+  const size=15,time=.37,fm=focusMap(c,size,time),m=metrics(c,time),half=c.mapSpanKm*500;
+  for(let j=0;j<size;j++)for(let i=0;i<size;i++)assert.equal(fm.values[j*size+i],field(c,m.truth,m.estimate,-half+2*half*i/(size-1),-half+2*half*j/(size-1),time));
+  assert.equal(fm.center,m.actual);
+  assert.equal(fm.max,Math.max(...fm.values));
+ }
+});
