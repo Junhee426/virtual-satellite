@@ -4,3 +4,12 @@ services:
     runtime: static
     buildCommand: npm run build
     staticPublishPath: ./dist
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: SKIP_INSTALL_DEPS
+        value: "true"
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=0, must-revalidate
