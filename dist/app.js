@@ -18,16 +18,19 @@ function controls(){
  <div class="group"><h3><b>02</b> RADIO FREQUENCY</h3>${field('freqGHz','반송파 주파수',.1,'GHz')}<div class="quick">${[2,20,30].map(f=>`<button data-freq="${f}" aria-pressed="${cfg.freqGHz===f}">${f} GHz</button>`).join('')}</div><div style="margin-top:14px">${field('totalPowerW',cfg.powerMode==='Per node'?'위성당 RF 전력':'전체 RF 전력',1,'W')}${select('powerMode','전력 기준',['Total fixed','Per node'])}</div></div>
  <div class="group"><h3><b>03</b> PHASE & ERRORS</h3>${select('command','위상 보정',['Estimated','Oracle','None'])}<div class="pair">${field('pathErrorMm','경로 오차 RMS',.1,'mm')}${field('rfPhaseRmsDeg','RF 위상 RMS',.1,'°')}</div><div class="pair">${field('freqOffsetHz','주파수 오차',.01,'Hz RMS')}${field('timeS','경과 시간',.001,'s')}</div></div>
  <div class="group"><h3><b>04</b> OBSERVATION</h3>${field('lossTargetDb','평균 손실 목표',.01,'dB')}${tab==='focus'?field('mapSpanKm','초점 지도 폭','any','km'):''}<p class="hint">같은 설정에서는 같은 난수 시드로 비교합니다. 경로 RMS는 3D 위치 오차와 다릅니다.</p></div>`;
- $$('[data-key]').forEach(el=>{el.onchange=()=>{
+ // While typing, apply valid values without rewriting the field (so "0.0" can become "0.005"); on change, show the normalized value or restore it.
+ const apply=(el,write)=>{
   stop();const key=el.dataset.key;
+  if(el.tagName==='INPUT'&&(el.value.trim()===''||!Number.isFinite(Number(el.value)))){if(write)el.value=cfg[key];return}
   cfg=normalizeConfig({[key]:el.tagName==='SELECT'?el.value:Number(el.value)},cfg);
-  el.value=cfg[key];const range=$(`[data-range="${key}"]`);if(range)range.value=cfg[key];
+  if(write)el.value=cfg[key];const range=$(`[data-range="${key}"]`);if(range)range.value=cfg[key];
   if(key==='powerMode')controls();
   $$('[data-freq]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.freq)===cfg.freqGHz)));
   clearPreset();render();
- };if(el.tagName==='INPUT')el.oninput=()=>{
+ };
+ $$('[data-key]').forEach(el=>{el.onchange=()=>apply(el,true);if(el.tagName==='INPUT')el.oninput=()=>{
   const value=Number(el.value),[min,max]=LIMITS[el.dataset.key];
-  if(el.value.trim()!==''&&Number.isFinite(value)&&value>=min&&value<=max)el.onchange();
+  if(el.value.trim()!==''&&Number.isFinite(value)&&value>=min&&value<=max)apply(el,false);
  };});
  $$('[data-range]').forEach(el=>el.oninput=()=>{stop();cfg=normalizeConfig({[el.dataset.range]:Number(el.value)},cfg);$('#f-'+el.dataset.range).value=cfg[el.dataset.range];clearPreset();render()});
  $$('[data-freq]').forEach(b=>b.onclick=()=>{stop();cfg.freqGHz=Number(b.dataset.freq);clearPreset();controls();render()});
@@ -82,7 +85,7 @@ function palette(t){
  return stops[i].map((a,k)=>Math.round(a+(stops[i+1][k]-a)*f));
 }
 function focusView(){
- const key=JSON.stringify(cfg);
+ const {lossTargetDb,...mapCfg}=cfg,key=JSON.stringify(mapCfg);
  if(mapKey!==key){cachedMap=focusMap(cfg,121,cfg.timeS);mapKey=key}
  const fm=cachedMap,off=document.createElement('canvas');off.width=off.height=fm.size;
  const ctx=off.getContext('2d'),img=ctx.createImageData(fm.size,fm.size),db=v=>Math.max(-35,10*Math.log10(Math.max(v/fm.max,1e-12)));
@@ -96,7 +99,7 @@ function focusView(){
  h+=circle(320,210,9,'none','stroke="#fff" stroke-width="1.5"')+text(334,199,'목표점','style="fill:#fff"')+text(550,438,'x / km')+text(131,12,'y / km');
  const scaleHint=wavelength(cfg.freqGHz)*cfg.rangeKm/Math.max(cfg.baselineM,1),stepKm=cfg.mapSpanKm/(fm.size-1),undersampled=stepKm>scaleHint/3;
  let curve='';
- for(let i=0;i<fm.size;i++){const x=65+i/(fm.size-1)*530,y=36-db(fm.values[60*fm.size+i])/35*91;curve+=`${i?'L':'M'}${x.toFixed(2)},${y.toFixed(2)} `}
+ const mid=(fm.size-1)>>1;for(let i=0;i<fm.size;i++){const x=65+i/(fm.size-1)*530,y=36-db(fm.values[mid*fm.size+i])/35*91;curve+=`${i?'L':'M'}${x.toFixed(2)},${y.toFixed(2)} `}
  let cut='';
  [0,-10,-20,-30].forEach(v=>{let y=36-v/35*91;cut+=line(65,y,595,y,'#263644')+text(53,y+4,v,'text-anchor="end"')});
  cut+=`<path d="${curve}" fill="none" stroke="#77e4c7" stroke-width="1.8"/>`+line(330,30,330,133,'#9caebc','stroke-dasharray="3 4"')+text(65,155,fmt(-cfg.mapSpanKm/2,cfg.mapSpanKm<.1?4:2)+' km')+text(595,155,fmt(cfg.mapSpanKm/2,cfg.mapSpanKm<.1?4:2)+' km','text-anchor="end"')+text(330,155,'목표점','text-anchor="middle"');
